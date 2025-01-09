@@ -4,23 +4,109 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mail Merge by Samarth Verma</title>
-    <meta name="description" content="Mail Merge - Streamline your email workflow" />
-    <meta name="author" content="Samarth Verma" />
-    <meta property="og:image" content="/og-image.png" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      }
+
+      .container {
+        text-align: center;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 1rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        animation: fadeIn 0.6s ease-out;
+      }
+
+      h1 {
+        color: #333;
+        margin-bottom: 2rem;
+        font-size: 2.5rem;
+      }
+
+      .platform-select {
+        margin: 1.5rem 0;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 1rem;
+        color: #555;
+        font-size: 1.2rem;
+      }
+
+      select {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+        border: 2px solid #ddd;
+        border-radius: 0.5rem;
+        background: white;
+        cursor: pointer;
+        outline: none;
+        min-width: 200px;
+      }
+
+      select:focus {
+        border-color: #007AFF;
+      }
+
+      button {
+        margin-top: 1.5rem;
+        padding: 1rem 2.5rem;
+        font-size: 1.1rem;
+        background: #007AFF;
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      button:hover {
+        background: #0056b3;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          width: 90%;
+          padding: 1.5rem;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        select,
+        button {
+          width: 100%;
+        }
+      }
+    </style>
   </head>
   <body>
     <div class="container">
       <h1>Mail Merge by Samarth Verma</h1>
-      <form action="/parameters" method="post">
-        <div class="platform-select">
-          <label for="platform">What's your platform?</label>
-          <select id="platform" name="platform" required>
-            <option value="">Select your platform</option>
-            <option value="mac">Mac</option>
-            <option value="windows">Windows</option>
-          </select>
-        </div>
+      <form action="/" method="post">
         <button type="submit">Done</button>
       </form>
     </div>

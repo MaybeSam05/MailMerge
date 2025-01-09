@@ -28,47 +28,58 @@
       }
     </style>
     <script>
-      // Generate email input boxes
+      let numParams = 0;
+
+      // Generate Replace input boxes
+      function generateParameters() {
+        const container = document.getElementById('parametersContainer');
+        container.innerHTML = '';
+
+        numParams = document.getElementById('numParams').value;
+        for (let i = 1; i <= numParams; i++) {
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.name = `replace${i}`;
+          input.placeholder = `Replace ${i}`;
+          input.className = 'dynamic-input';
+          container.appendChild(input);
+        }
+      }
+
+      // Generate email input boxes with parameter fields
       function generateEmails() {
         const container = document.getElementById('emailsContainer');
         container.innerHTML = '';
 
         const numEmails = document.getElementById('numEmails').value;
         for (let i = 1; i <= numEmails; i++) {
-          const input = document.createElement('input');
-          input.type = 'text';
-          input.name = `email${i}`;
-          input.placeholder = `Email ${i}`;
-          input.className = 'dynamic-input';
-          container.appendChild(input);
-        }
-      }
+          const emailSection = document.createElement('div');
+          emailSection.className = 'email-section';
+          
+          // Email label
+          const emailLabel = document.createElement('h3');
+          emailLabel.innerText = `Email ${i}`;
+          emailSection.appendChild(emailLabel);
 
-      // Generate parameter and to-replace boxes
-      function generateParameters() {
-        const container = document.getElementById('parametersContainer');
-        container.innerHTML = '';
+          // Email input box
+          const emailInput = document.createElement('input');
+          emailInput.type = 'text';
+          emailInput.name = `email${i}`;
+          emailInput.placeholder = `Email ${i}`;
+          emailInput.className = 'dynamic-input';
+          emailSection.appendChild(emailInput);
 
-        const numParams = document.getElementById('numParams').value;
-        for (let i = 1; i <= numParams; i++) {
-          const row = document.createElement('div');
-          row.className = 'row';
+          // Parameter input boxes for each email
+          for (let j = 1; j <= numParams; j++) {
+            const paramInput = document.createElement('input');
+            paramInput.type = 'text';
+            paramInput.name = `email${i}_param${j}`;
+            paramInput.placeholder = `Parameter ${j}`;
+            paramInput.className = 'dynamic-input';
+            emailSection.appendChild(paramInput);
+          }
 
-          const paramInput = document.createElement('input');
-          paramInput.type = 'text';
-          paramInput.name = `param${i}`;
-          paramInput.placeholder = `Parameter ${i}`;
-          paramInput.className = 'dynamic-input';
-
-          const replaceInput = document.createElement('input');
-          replaceInput.type = 'text';
-          replaceInput.name = `replace${i}`;
-          replaceInput.placeholder = `To Replace ${i}`;
-          replaceInput.className = 'dynamic-input';
-
-          row.appendChild(paramInput);
-          row.appendChild(replaceInput);
-          container.appendChild(row);
+          container.appendChild(emailSection);
         }
       }
     </script>
@@ -77,26 +88,34 @@
     <div class="container">
       <h1>Email Automation Form</h1>
       <form action="/submit" method="post">
+        <div class="platform-select">
+            <label for="platform">What's your platform?</label>
+            <select id="platform" name="platform" required>
+              <option value="">Select your platform</option>
+              <option value="mac">Mac</option>
+              <option value="windows">Windows</option>
+            </select>
+          </div>
         <!-- Gmail Key -->
         <div>
           <label for="gmailKey">Gmail Key</label>
           <input type="text" id="gmailKey" name="gmailKey" class="dynamic-input" required>
         </div>
 
-        <!-- Number of Emails and Email Inputs -->
-        <div>
-          <label for="numEmails">Number of Emails</label>
-          <input type="number" id="numEmails" name="numEmails" min="1" max="10" required>
-          <button type="button" onclick="generateEmails()">Create Emails</button>
-          <div id="emailsContainer" class="row"></div>
-        </div>
-
-        <!-- Parameters and To Replace Columns -->
+        <!-- Number of Parameters and Replace Inputs -->
         <div>
           <label for="numParams">Number of Parameters</label>
           <input type="number" id="numParams" name="numParams" min="1" max="10" required>
           <button type="button" onclick="generateParameters()">Create Parameters</button>
           <div id="parametersContainer"></div>
+        </div>
+
+        <!-- Number of Emails and Email Inputs with Parameters -->
+        <div>
+          <label for="numEmails">Number of Emails</label>
+          <input type="number" id="numEmails" name="numEmails" min="1" max="10" required>
+          <button type="button" onclick="generateEmails()">Create Emails</button>
+          <div id="emailsContainer"></div>
         </div>
 
         <!-- Initial Subject Email -->
