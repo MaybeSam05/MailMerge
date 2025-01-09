@@ -1,6 +1,15 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 
 app = Flask(__name__)
+
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    if request.method == 'POST':
+        # Get the selected platform from the dropdown
+        selected_platform = request.form['platform']
+        # Redirect to the parameters page with the selected platform
+        return redirect(url_for('parameters', platform=selected_platform))
+    return render_template('index.html')
 
 @app.route('/parameters', methods=['GET', 'POST'])
 def parameters():
@@ -45,7 +54,6 @@ def submit():
 
     # Print or log the data for debugging purposes
     print(data)
-
     # Return the data as JSON for demonstration
     return jsonify(data)
 
