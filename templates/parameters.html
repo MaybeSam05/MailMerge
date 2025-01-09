@@ -63,7 +63,7 @@
           const replaceInput = document.createElement('input');
           replaceInput.type = 'text';
           replaceInput.name = `replace${i}`;
-          replaceInput.placeholder = `Replace ${i}`;
+          replaceInput.placeholder = `To Replace ${i}`;
           replaceInput.className = 'dynamic-input';
 
           row.appendChild(paramInput);
@@ -76,71 +76,72 @@
   <body>
     <div class="container">
       <h1>Email Automation Form</h1>
+      <form action="/submit" method="post">
+        <!-- Gmail Key -->
+        <div>
+          <label for="gmailKey">Gmail Key</label>
+          <input type="text" id="gmailKey" name="gmailKey" class="dynamic-input" required>
+        </div>
 
-      <!-- Gmail Key -->
-      <div>
-        <label for="gmailKey">Gmail Key</label>
-        <input type="text" id="gmailKey" name="gmailKey" class="dynamic-input" required>
-      </div>
+        <!-- Number of Emails and Email Inputs -->
+        <div>
+          <label for="numEmails">Number of Emails</label>
+          <input type="number" id="numEmails" name="numEmails" min="1" max="10" required>
+          <button type="button" onclick="generateEmails()">Create Emails</button>
+          <div id="emailsContainer" class="row"></div>
+        </div>
 
-      <!-- Number of Emails and Email Inputs -->
-      <div>
-        <label for="numEmails">Number of Emails</label>
-        <input type="number" id="numEmails" name="numEmails" min="1" max="10" required>
-        <button type="button" onclick="generateEmails()">Create Emails</button>
-        <div id="emailsContainer" class="row"></div>
-      </div>
+        <!-- Parameters and To Replace Columns -->
+        <div>
+          <label for="numParams">Number of Parameters</label>
+          <input type="number" id="numParams" name="numParams" min="1" max="10" required>
+          <button type="button" onclick="generateParameters()">Create Parameters</button>
+          <div id="parametersContainer"></div>
+        </div>
 
-      <!-- Parameters and To Replace Columns -->
-      <div>
-        <label for="numParams">Number of Parameters</label>
-        <input type="number" id="numParams" name="numParams" min="1" max="10" required>
-        <button type="button" onclick="generateParameters()">Create Parameters</button>
-        <div id="parametersContainer"></div>
-      </div>
+        <!-- Initial Subject Email -->
+        <div>
+          <label for="initialSubject">Initial Subject Email</label>
+          <input type="text" id="initialSubject" name="initialSubject" class="dynamic-input" required>
+        </div>
 
-      <!-- Initial Subject Email -->
-      <div>
-        <label for="initialSubject">Initial Subject Email</label>
-        <input type="text" id="initialSubject" name="initialSubject" class="dynamic-input" required>
-      </div>
+        <!-- Initial Body Email -->
+        <div>
+          <label for="initialBody">Initial Body Email</label>
+          <textarea id="initialBody" name="initialBody" rows="5" class="dynamic-input" required></textarea>
+        </div>
 
-      <!-- Initial Body Email -->
-      <div>
-        <label for="initialBody">Initial Body Email</label>
-        <textarea id="initialBody" name="initialBody" rows="5" class="dynamic-input" required></textarea>
-      </div>
+        <!-- Followup Subject Email -->
+        <div>
+          <label for="followupSubject">Followup Subject Email</label>
+          <input type="text" id="followupSubject" name="followupSubject" class="dynamic-input" required>
+        </div>
 
-      <!-- Followup Subject Email -->
-      <div>
-        <label for="followupSubject">Followup Subject Email</label>
-        <input type="text" id="followupSubject" name="followupSubject" class="dynamic-input" required>
-      </div>
+        <!-- Followup Body Email -->
+        <div>
+          <label for="followupBody">Followup Body Email</label>
+          <textarea id="followupBody" name="followupBody" rows="5" class="dynamic-input" required></textarea>
+        </div>
 
-      <!-- Followup Body Email -->
-      <div>
-        <label for="followupBody">Followup Body Email</label>
-        <textarea id="followupBody" name="followupBody" rows="5" class="dynamic-input" required></textarea>
-      </div>
+        <!-- Followup Days Dropdown -->
+        <div>
+          <label for="followupDays">How many days later should the followup send?</label>
+          <select id="followupDays" name="followupDays" class="dynamic-input" required>
+            <option value="1">1 Day</option>
+            <option value="2">2 Days</option>
+            <option value="3">3 Days</option>
+            <option value="4">4 Days</option>
+            <option value="5">5 Days</option>
+            <option value="6">6 Days</option>
+            <option value="7">7 Days</option>
+          </select>
+        </div>
 
-      <!-- Followup Days Dropdown -->
-      <div>
-        <label for="followupDays">How many days later should the followup send?</label>
-        <select id="followupDays" name="followupDays" class="dynamic-input" required>
-          <option value="1">1 Day</option>
-          <option value="2">2 Days</option>
-          <option value="3">3 Days</option>
-          <option value="4">4 Days</option>
-          <option value="5">5 Days</option>
-          <option value="6">6 Days</option>
-          <option value="7">7 Days</option>
-        </select>
-      </div>
-
-      <!-- Done Button -->
-      <div>
-        <button type="submit">Done</button>
-      </div>
+        <!-- Done Button -->
+        <div>
+          <button type="submit">Done</button>
+        </div>
+      </form>
     </div>
   </body>
 </html>
