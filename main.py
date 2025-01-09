@@ -1,4 +1,5 @@
 import smtplib
+import sys
 
 def main():
     data = {
@@ -19,13 +20,22 @@ def main():
     }
     
     platform = data['platform']
+    sender = data['user_email']
+    key = data['gmail_key']
+    days = data['followup_days']
 
+    refined = process_data(data)
+    initsend(refined, sender, key)
+
+    #print(refined[0])
+
+    sys.exit()
     if platform == "mac":
-        Mac(data)
+        Mac(refined)
     else:
-        Windows(data)
+        Windows(refined)
 
-def Mac(data):
+def process_data(data):
     formatted_emails = []
 
     # Loop through each email and its parameters
@@ -55,15 +65,31 @@ def Mac(data):
             'followup_body': followup_body
         })
 
-    # Output the result
-    for email in formatted_emails:
-        print(f"Email: {email['email']}")
-        print(f"Initial Subject: {email['initial_subject']}")
-        print(f"Initial Body: {email['initial_body']}")
-        print(f"Follow-Up Subject: {email['followup_subject']}")
-        print(f"Follow-Up Body: {email['followup_body']}")
-        print("-" * 40)
+    return formatted_emails
 
+        # NOTE TO SELF :: POSTTEXT KEEPS CHAGING AFTER EVERY ITERATION
+        # APPEND TO AN ARRAY AND RETURN THE ARRAY? ALSO YOU NEED THE EMAILS BUT I THINK THATS IN AN ARRAY CALLED formatted_emails
+        # POSSIBLE TO RETURN formatted_EMAILS and put all this in a function and then have mac/windows functions
+        
+        #server = smtplib.SMTP("smtp.gmail.com",587)
+        #server.starttls()
+        #server.login(sender, key)
+        #server.sendmail(sender, email['email'], text)
+
+def initsend(data, sender, key):
+    
+    for entry in data:
+        receiver = entry['email']
+        server = smtplib.SMTP("smtp.gmail.com",587)
+        server.starttls()
+        server.login(sender, key)
+        text = f"Subject: {entry['initial_subject']}\n\n{entry['initial_body']}"
+        server.sendmail(sender, receiver, text)
+        print("An email has been sent")
+
+def Mac(data):
+    print("Hi")
+    
 def Windows(data):
     print("Hi")
 
