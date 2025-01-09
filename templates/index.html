@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mail Merge by Samarth Verma</title>
+    <meta name="description" content="Mail Merge - Streamline your email workflow" />
+    <meta name="author" content="Samarth Verma" />
+    <meta property="og:image" content="/og-image.png" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <div class="container">
+      <h1>Mail Merge by Samarth Verma</h1>
+      <form action="/parameters" method="post">
+        <div class="platform-select">
+          <label for="platform">What's your platform?</label>
+          <select id="platform" name="platform" required>
+            <option value="">Select your platform</option>
+            <option value="mac">Mac</option>
+            <option value="windows">Windows</option>
+          </select>
+        </div>
+        <button type="submit">Done</button>
+      </form>
+    </div>
+  </body>
+</html>
