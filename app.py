@@ -17,6 +17,8 @@ def submit():
     # Step 1: Collect Gmail key
     gmail_key = request.form.get('gmailKey')
 
+    userEmail = request.form.get('userEmail')
+
     platform = request.form.get('platform')
 
     # Step 2: Collect Replace values
@@ -43,6 +45,7 @@ def submit():
     # Step 6: Return or process data
     data = {
         "platform": platform,
+        "user_email": userEmail,
         "gmail_key": gmail_key,
         "replace_values": replace_values,
         "emails_data": emails_data,
