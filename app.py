@@ -2,10 +2,17 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 import smtplib
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timedelta
+import re
 
 app = Flask(__name__)
 scheduler = BackgroundScheduler()
 scheduler.start()
+
+def sanitize_input(input_str):
+    """Remove special characters from input to prevent issues."""
+    if input_str:
+        return re.sub(r'[^\w\s@.]+', '', input_str)
+    return input_str
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -19,28 +26,28 @@ def parameters():
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    # Step 1: Collect Gmail key
-    gmail_key = request.form.get('gmailKey')
-    user_email = request.form.get('userEmail')
-    platform = request.form.get('platform')
+    # Step 1: Collect and sanitize Gmail key and user email
+    gmail_key = sanitize_input(request.form.get('gmailKey'))
+    user_email = sanitize_input(request.form.get('userEmail'))
+    platform = sanitize_input(request.form.get('platform'))
 
-    # Step 2: Collect Replace values
+    # Step 2: Collect and sanitize Replace values
     num_params = int(request.form.get('numParams'))
-    replace_values = [request.form.get(f'replace{i}') for i in range(1, num_params + 1)]
+    replace_values = [sanitize_input(request.form.get(f'replace{i}')) for i in range(1, num_params + 1)]
 
-    # Step 3: Collect emails and their parameters
+    # Step 3: Collect and sanitize emails and their parameters
     num_emails = int(request.form.get('numEmails'))
     emails_data = []
     for i in range(1, num_emails + 1):
-        email = request.form.get(f'email{i}')
-        params = [request.form.get(f'email{i}_param{j}') for j in range(1, num_params + 1)]
+        email = sanitize_input(request.form.get(f'email{i}'))
+        params = [sanitize_input(request.form.get(f'email{i}_param{j}')) for j in range(1, num_params + 1)]
         emails_data.append({"email": email, "parameters": params})
 
-    # Step 4: Collect initial and follow-up email data
-    initial_subject = request.form.get('initialSubject')
-    initial_body = request.form.get('initialBody')
-    followup_subject = request.form.get('followupSubject')
-    followup_body = request.form.get('followupBody')
+    # Step 4: Collect and sanitize initial and follow-up email data
+    initial_subject = sanitize_input(request.form.get('initialSubject'))
+    initial_body = sanitize_input(request.form.get('initialBody'))
+    followup_subject = sanitize_input(request.form.get('followupSubject'))
+    followup_body = sanitize_input(request.form.get('followupBody'))
 
     # Step 5: Collect follow-up days
     followup_days = int(request.form.get('followupDays'))
