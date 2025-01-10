@@ -29,7 +29,6 @@ def submit():
     # Step 1: Collect and sanitize Gmail key and user email
     gmail_key = sanitize_input(request.form.get('gmailKey'))
     user_email = sanitize_input(request.form.get('userEmail'))
-    platform = sanitize_input(request.form.get('platform'))
 
     # Step 2: Collect and sanitize Replace values
     num_params = int(request.form.get('numParams'))
@@ -54,7 +53,6 @@ def submit():
 
     # Step 6: Prepare the data for email processing
     data = {
-        "platform": platform,
         "user_email": user_email,
         "gmail_key": gmail_key,
         "replace_values": replace_values,
@@ -133,7 +131,7 @@ def followupsend(data, sender, key):
 
 def schedule_followup(data, sender, key, days):
     """Schedule the follow-up emails to be sent after a specified number of days."""
-    run_time = datetime.now() + timedelta(days=days)
+    run_time = datetime.now() + timedelta(minutes=days)
     scheduler.add_job(followupsend, 'date', run_date=run_time, args=[data, sender, key])
     print(f"Follow-up emails scheduled to run at {run_time}")
 
