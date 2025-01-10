@@ -1,5 +1,6 @@
 # Mail Merge Email Automation
 
+https://mailmerge-2k00.onrender.com/
 A Flask-based web application that streamlines email workflows by automating the process of sending initial and follow-up emails. The app allows users to input parameters, create personalized email content, and schedule follow-up emails automatically.
 
 ## Features
