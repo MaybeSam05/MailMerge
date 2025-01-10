@@ -1,6 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
+import smtplib
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
+scheduler = BackgroundScheduler()
+scheduler.start()
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -16,9 +21,7 @@ def parameters():
 def submit():
     # Step 1: Collect Gmail key
     gmail_key = request.form.get('gmailKey')
-
-    userEmail = request.form.get('userEmail')
-
+    user_email = request.form.get('userEmail')
     platform = request.form.get('platform')
 
     # Step 2: Collect Replace values
@@ -33,19 +36,19 @@ def submit():
         params = [request.form.get(f'email{i}_param{j}') for j in range(1, num_params + 1)]
         emails_data.append({"email": email, "parameters": params})
 
-    # Step 4: Collect initial and followup email data
+    # Step 4: Collect initial and follow-up email data
     initial_subject = request.form.get('initialSubject')
     initial_body = request.form.get('initialBody')
     followup_subject = request.form.get('followupSubject')
     followup_body = request.form.get('followupBody')
 
-    # Step 5: Collect followup days
+    # Step 5: Collect follow-up days
     followup_days = int(request.form.get('followupDays'))
 
-    # Step 6: Return or process data
+    # Step 6: Prepare the data for email processing
     data = {
         "platform": platform,
-        "user_email": userEmail,
+        "user_email": user_email,
         "gmail_key": gmail_key,
         "replace_values": replace_values,
         "emails_data": emails_data,
@@ -56,10 +59,76 @@ def submit():
         "followup_days": followup_days
     }
 
-    # Print or log the data for debugging purposes
-    print(data)
-    # Return the data as JSON for demonstration
-    return jsonify(data)
+    # Send initial emails and schedule follow-ups
+    refined_data = process_data(data)
+    initsend(refined_data, user_email, gmail_key)
+    followup_date = schedule_followup(refined_data, user_email, gmail_key, followup_days)
+
+    # Render the success page with relevant info
+    return render_template('confirm.html', num_emails=num_emails)
+
+
+def process_data(data):
+    """Format the email data by replacing placeholders."""
+    formatted_emails = []
+
+    for email_data in data['emails_data']:
+        email = email_data['email']
+        params = email_data['parameters']
+
+        initial_subject = data['initial_subject']
+        initial_body = data['initial_body']
+        followup_subject = data['followup_subject']
+        followup_body = data['followup_body']
+
+        for placeholder, value in zip(data['replace_values'], params):
+            initial_subject = initial_subject.replace(placeholder, value)
+            initial_body = initial_body.replace(placeholder, value)
+            followup_subject = followup_subject.replace(placeholder, value)
+            followup_body = followup_body.replace(placeholder, value)
+
+        formatted_emails.append({
+            'email': email,
+            'initial_subject': initial_subject,
+            'initial_body': initial_body,
+            'followup_subject': followup_subject,
+            'followup_body': followup_body
+        })
+
+    return formatted_emails
+
+
+def initsend(data, sender, key):
+    """Send initial emails to the recipients."""
+    for entry in data:
+        receiver = entry['email']
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender, key)
+        text = f"Subject: {entry['initial_subject']}\n\n{entry['initial_body']}"
+        server.sendmail(sender, receiver, text)
+        print(f"Initial email sent to {receiver}")
+    server.quit()
+
+
+def followupsend(data, sender, key):
+    """Send follow-up emails to the recipients."""
+    for entry in data:
+        receiver = entry['email']
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender, key)
+        text = f"Subject: {entry['followup_subject']}\n\n{entry['followup_body']}"
+        server.sendmail(sender, receiver, text)
+        print(f"Follow-up email sent to {receiver}")
+    server.quit()
+
+
+def schedule_followup(data, sender, key, days):
+    """Schedule the follow-up emails to be sent after a specified number of days."""
+    run_time = datetime.now() + timedelta(days=days)
+    scheduler.add_job(followupsend, 'date', run_date=run_time, args=[data, sender, key])
+    print(f"Follow-up emails scheduled to run at {run_time}")
 
 
 if __name__ == '__main__':

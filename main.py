@@ -1,16 +1,21 @@
 import smtplib
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime, timedelta
 import sys
+
+scheduler = BackgroundScheduler()
+scheduler.start()
 
 def main():
     data = {
     'platform': 'mac',
     'user_email': 'verma.samarth05@gmail.com',
-    'gmail_key': 'Blah Blah',
+    'gmail_key': 'yxegikcvfyzyrwfp',
     'replace_values': ['{name}', '{color}'],
     'emails_data': [
-        {'email': 'hello@gmail.com', 'parameters': ['John', 'Black']},
-        {'email': 'bye@gmail.com', 'parameters': ['Franklin', 'Yellow']},
-        {'email': 'yellow@gmail.com', 'parameters': ['Joseph', 'Orange']}
+        {'email': 'verma.samarth05@gmail.com', 'parameters': ['John', 'Black']},
+        {'email': 'verma.samarth05@gmail.com', 'parameters': ['Franklin', 'Yellow']},
+        {'email': 'verma.samarth05@gmail.com', 'parameters': ['Joseph', 'Orange']}
     ],
     'initial_subject': 'Hello {name} and I am {color}',
     'initial_body': 'Hello {name} I love {color}',
@@ -19,21 +24,15 @@ def main():
     'followup_days': 1
     }
     
-    platform = data['platform']
     sender = data['user_email']
     key = data['gmail_key']
     days = data['followup_days']
 
-    refined = process_data(data)
-    initsend(refined, sender, key)
+    refined_data = process_data(data)
 
-    #print(refined[0])
+    initsend(refined_data, sender, key)
 
-    sys.exit()
-    if platform == "mac":
-        Mac(refined)
-    else:
-        Windows(refined)
+    schedule_followup(refined_data, sender, key, days)
 
 def process_data(data):
     formatted_emails = []
@@ -86,13 +85,25 @@ def initsend(data, sender, key):
         text = f"Subject: {entry['initial_subject']}\n\n{entry['initial_body']}"
         server.sendmail(sender, receiver, text)
         print("An email has been sent")
+    server.quit()
 
-def Mac(data):
-    print("Hi")
+def followupsend(data, sender, key):
+
+    for entry in data:
+        receiver = entry['email']
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender, key)
+        text = f"Subject: {entry['followup_subject']}\n\n{entry['followup_body']}"
+        server.sendmail(sender, receiver, text)
+        print(f"Follow-up email sent to {receiver}")
+    server.quit()
+
+def schedule_followup(data, sender, key, days):
     
-def Windows(data):
-    print("Hi")
-
+    run_time = datetime.now() + timedelta(minutes=5)
+    scheduler.add_job(followupsend, 'date', run_date=run_time, args=[data, sender, key])
+    print(f"Follow-up emails scheduled to run at {run_time}")
 
 if __name__ == "__main__":
     main()
