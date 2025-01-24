@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 import smtplib
 from datetime import datetime, timedelta
 import re
+import csv
 
 app = Flask(__name__)
 
@@ -87,6 +88,28 @@ def process_data(data):
         })
 
     return formatted_emails
+
+def csvprocess(csvfile, emailSubject, emailBody):
+    formattedEmails = {}
+
+    with open(csvfile, 'r') as file:
+        csv_reader = csv.reader(file)
+        headers = next(csv_reader)
+        parameters = headers[1:]  # all parameters
+        
+        for row in csv_reader:
+            email = row[0]
+            param_dict = dict(zip(parameters, row[1:]))
+            
+            formatted_subject = emailSubject
+            formatted_body = emailBody
+            for param, value in param_dict.items():
+                formatted_subject = formatted_subject.replace(param, value)
+                formatted_body = formatted_body.replace(param, value)
+            
+            formattedEmails[email] = (formatted_subject, formatted_body)
+    
+    return formattedEmails
 
 
 def initsend(data, sender, key):
