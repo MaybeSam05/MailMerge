@@ -22,6 +22,10 @@ def home():
 def parameters():
     return render_template('parameters.html')
 
+@app.route('/csvparameters', methods=['GET', 'POST'])
+def csvparameters():
+    return render_template('csvparameters.html')
+
 @app.route('/submit', methods=['POST'])
 def submit():
     # Step 1: Collect and sanitize Gmail key and user email
