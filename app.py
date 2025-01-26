@@ -26,6 +26,11 @@ def parameters():
 def csvparameters():
     return render_template('csvparameters.html')
 
+@app.route('/upload', methods=['POST'])
+def handle_csvdata():
+    upload_file()
+    return "hello!!!!"
+
 @app.route('/submit', methods=['POST'])
 def submit():
     # Step 1: Collect and sanitize Gmail key and user email
@@ -69,6 +74,19 @@ def submit():
     # Render the success page with relevant info
     return render_template('confirm.html', num_emails=num_emails)
 
+def upload_file():
+    if 'csvFile' not in request.files:
+        return "No file part", 400
+
+    file = request.files['csvFile']
+    if file.filename == '':
+        return "No selected file", 400
+
+    if file and file.filename.endswith('.csv'):
+        file.save(f"./uploads/{file.filename}")  
+        return f"File {file.filename} uploaded successfully!"
+
+    return "Invalid file type", 400
 
 def process_data(data):
     """Format the email data by replacing placeholders."""
