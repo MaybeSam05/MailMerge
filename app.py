@@ -33,10 +33,8 @@ def handle_csvdata():
     file = getFileName(response)
     gmail_key = sanitize_input(request.form.get('gmailKey'))
     user_email = sanitize_input(request.form.get('userEmail'))
-    initial_subject = sanitize_input(request.form.get('initialSubject'))
-    print(initial_subject)
-    initial_body = sanitize_input(request.form.get('initialBody'))
-    print(initial_body)
+    initial_subject = (request.form.get('initialSubject'))
+    initial_body = (request.form.get('initialBody'))
 
     emailData, num_emails = csvprocess(file, initial_subject, initial_body)
     print(emailData)
