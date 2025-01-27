@@ -102,6 +102,13 @@
         border-bottom: 1px solid var(--secondary-color);
       }
 
+      .gif-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: var(--spacing-lg) 0;
+      }
+
       @media (max-width: 768px) {
         .container {
           padding: var(--spacing-md);
@@ -131,6 +138,11 @@
                 <label for="initialBody">Body Email</label>
                 <textarea id="initialBody" name="initialBody" rows="5" class="dynamic-input" required></textarea>
             </div>
+
+            <div class="gif-container">
+                <img src="/static/mailmerge.gif" alt="Animated GIF" style="width:500px;height:450px;">
+            </div>
+
             <div class="section">
                 <label for="csvFile">Choose a CSV file to upload:</label>
                 <input type="file" id="csvFile" name="csvFile" accept=".csv" required>
