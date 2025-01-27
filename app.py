@@ -28,7 +28,14 @@ def csvparameters():
 
 @app.route('/upload', methods=['POST'])
 def handle_csvdata():
-    upload_file()
+    response = upload_file()
+    gmail_key = sanitize_input(request.form.get('gmailKey'))
+    user_email = sanitize_input(request.form.get('userEmail'))
+    initial_subject = sanitize_input(request.form.get('initialSubject'))
+    initial_body = sanitize_input(request.form.get('initialBody'))
+
+    emailData = csvprocess(initial_subject, initial_body)
+
     return "hello!!!!"
 
 @app.route('/submit', methods=['POST'])
@@ -84,9 +91,21 @@ def upload_file():
 
     if file and file.filename.endswith('.csv'):
         file.save(f"./uploads/{file.filename}")  
-        return f"File {file.filename} uploaded successfully!"
+        return {"message": "File uploaded successfully!", "file_name": file.filename}, 200
 
     return "Invalid file type", 400
+
+def getFileName(response):
+    if isinstance(response, tuple): 
+        message, status_code = response
+        if status_code == 200:
+            file_name = message['file_name'] 
+            return file_name
+        else:
+            return f"Error: {message}"
+    else:
+        return f"Unexpected response: {response}"
+
 
 def process_data(data):
     """Format the email data by replacing placeholders."""
