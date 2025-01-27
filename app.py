@@ -29,14 +29,17 @@ def csvparameters():
 @app.route('/upload', methods=['POST'])
 def handle_csvdata():
     response = upload_file()
+
+    file = getFileName(response)
     gmail_key = sanitize_input(request.form.get('gmailKey'))
     user_email = sanitize_input(request.form.get('userEmail'))
     initial_subject = sanitize_input(request.form.get('initialSubject'))
     initial_body = sanitize_input(request.form.get('initialBody'))
 
-    emailData = csvprocess(initial_subject, initial_body)
+    emailData, num_emails = csvprocess(file, initial_subject, initial_body)
+    sendCsvEmails(emailData, user_email, gmail_key)
 
-    return "hello!!!!"
+    return render_template('confirm.html', num_emails=num_emails)
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -90,7 +93,7 @@ def upload_file():
         return "No selected file", 400
 
     if file and file.filename.endswith('.csv'):
-        file.save(f"./uploads/{file.filename}")  
+        file.save(f"{file.filename}")  
         return {"message": "File uploaded successfully!", "file_name": file.filename}, 200
 
     return "Invalid file type", 400
@@ -131,9 +134,11 @@ def process_data(data):
     return formatted_emails
 
 def csvprocess(csvfile, emailSubject, emailBody):
+    filePath = "/uploads/" + csvfile
+    
     formattedEmails = {}
 
-    with open(csvfile, 'r') as file:
+    with open(filePath, 'r') as file:
         csv_reader = csv.reader(file)
         headers = next(csv_reader)
         parameters = headers[1:]  # all parameters
@@ -150,7 +155,7 @@ def csvprocess(csvfile, emailSubject, emailBody):
             
             formattedEmails[email] = (formatted_subject, formatted_body)
     
-    return formattedEmails
+    return formattedEmails, len(formattedEmails)
 
 
 def initsend(data, sender, key):
@@ -163,6 +168,17 @@ def initsend(data, sender, key):
         text = f"Subject: {entry['initial_subject']}\n\n{entry['initial_body']}"
         server.sendmail(sender, receiver, text)
         print(f"Initial email sent to {receiver}")
+    server.quit()
+
+def sendCsvEmails(data, sender, key):
+    """Send csv emails to the recipients."""
+    for email, (subject, body) in data.items():
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender, key)
+        text = f"Subject: {subject}\n\n{body}"
+        server.sendmail(sender, email, text)
+        print(f"Initial email sent to {email}")
     server.quit()
 
 if __name__ == '__main__':

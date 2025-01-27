@@ -37,6 +37,7 @@ def main():
         print(f"\nEmail: {email}")
         print(f"Subject: {subject}")
         print(f"Body: {body}")
+        print(len(formattedEmails))
 
 if __name__ == "__main__": 
     main()
